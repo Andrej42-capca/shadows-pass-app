@@ -2,18 +2,14 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Настройка Shadows Pass</title>
-    <!-- Подключаем скрипт Telegram, чтобы страница "общалась" с ботом -->
     <script src="https://telegram.org"></script>
     <style>
         body {
-            background-color: #131315;
-            color: #ffffff;
+            background-color: #131315; color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0; padding: 16px;
-            -webkit-user-select: none;
-            user-select: none;
+            margin: 0; padding: 16px; -webkit-user-select: none; user-select: none;
         }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .badge { background: #22c55e; color: black; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold;}
@@ -21,11 +17,25 @@
         .grid { display: flex; justify-content: space-between; margin-bottom: 12px;}
         .label { color: #8e8e93; font-size: 11px; letter-spacing: 0.5px; font-weight: 600; text-transform: uppercase;}
         .value { font-weight: bold; font-size: 15px; margin-top: 4px;}
+        
+        /* Стили для выбора серверов */
+        .server-select {
+            display: flex; flex-direction: column; gap: 10px; margin-top: 12px; margin-bottom: 20px;
+        }
+        .server-option {
+            background: #1e1e21; border: 2px solid #2c2c2e; border-radius: 12px; padding: 14px;
+            display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s;
+        }
+        .server-option.active { border-color: #22c55e; background: #1c2e24; }
+        .server-info { display: flex; align-items: center; gap: 12px; }
+        .server-flag { font-size: 20px; }
+        .server-name { font-weight: bold; font-size: 14px; }
+        .server-ping { color: #22c55e; font-size: 12px; font-weight: 600; }
+
         .btn-green {
             background: #22c55e; color: #000; width: 100%; padding: 14px;
             border: none; border-radius: 12px; font-size: 15px; font-weight: bold;
             cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
-            transition: background 0.2s;
         }
         .btn-green:active { background: #16a34a; }
         .step { margin-top: 20px; font-size: 14px;}
@@ -37,36 +47,52 @@
 <body>
 
     <div class="header">
-        <h2 id="os-title">Настройка Android</h2>
-        <span class="badge" id="status-badge">● АКТИВНА</span>
+        <h2 id="os-title">Настройка</h2>
+        <span class="badge">● АКТИВНА</span>
     </div>
 
     <div class="card">
         <div class="grid">
-            <div><div class="label">ПОЛЬЗОВАТЕЛЬ</div><div class="value" id="username">Пользователь</div></div>
-            <div><div class="label">ЛИМИТ УСТРОЙСТВ</div><div class="value" id="dev-limit">3</div></div>
-        </div>
-        <div class="grid" style="margin-top: 16px; margin-bottom: 0;">
-            <div><div class="label">ОСТАЛОСЬ</div><div class="value" style="color: #60a5fa;" id="days-left">Загрузка...</div></div>
-            <div><div class="label">ДЕЙСТВУЕТ ДО</div><div class="value" id="expire-date">--.--.----</div></div>
+            <div><div class="label">ПОЛЬЗОВАТЕЛЬ</div><div class="value" id="username">Абонент</div></div>
+            <div><div class="label">ЛИМИТ ЛИНИЙ</div><div class="value">3 устройства</div></div>
         </div>
     </div>
 
-    <h3 style="margin-top: 24px; font-size: 14px; color: #8e8e93; letter-spacing: 0.5px;">ПОДКЛЮЧЕНИЕ</h3>
+    <h3 style="font-size: 14px; color: #8e8e93; letter-spacing: 0.5px; margin-top: 24px;">1. ВЫБЕРИТЕ ЛОКАЦИЮ VPN</h3>
+    <div class="server-select">
+        <!-- Твой новый сервер во Франции -->
+        <div class="server-option active" onclick="selectServer(this, 'vless://france_paris_node_here')">
+            <div class="server-info">
+                <span class="server-flag">🇫🇷</span>
+                <div>
+                    <div class="server-name">France (Париж)</div>
+                    <div style="color: #8e8e93; font-size: 11px; margin-top: 2px;">Высокая стабильность</div>
+                </div>
+            </div>
+            <div class="server-ping">● 35 ms</div>
+        </div>
+
+        <!-- Резервный сервер (можно будет добавить позже) -->
+        <div class="server-option" onclick="selectServer(this, 'vless://germany_frankfurt_node_here')">
+            <div class="server-info">
+                <span class="server-flag">🇩🇪</span>
+                <div>
+                    <div class="server-name">Germany (Франкфурт)</div>
+                    <div style="color: #8e8e93; font-size: 11px; margin-top: 2px;">Резервный узел</div>
+                </div>
+            </div>
+            <div class="server-ping" style="color: #8e8e93;">Запасной</div>
+        </div>
+    </div>
     
     <div class="step">
-        <div class="step-title"><div class="step-num">1</div> Выберите приложение</div>
-        <p>Happ или INCY — активное подсвечено зелёным.</p>
-    </div>
-
-    <div class="step">
-        <div class="step-title"><div class="step-num">2</div> Скачайте клиент</div>
-        <p id="download-text">Установите приложение из Google Play или APK-файл.</p>
+        <div class="step-title"><div class="step-num">2</div> Установите клиент</div>
+        <p id="download-text">Скачайте приложение Happ или INCY из официального магазина приложений на свой телефон.</p>
     </div>
 
     <div class="step" style="margin-top: 24px;">
-        <div class="step-title"><div class="step-num">3</div> Добавьте подписку в клиент</div>
-        <p style="margin-bottom: 16px;">После установки нажмите кнопку автодобавления ниже.</p>
+        <div class="step-title"><div class="step-num">3</div> Подключите интернет</div>
+        <p style="margin-bottom: 16px;">Нажмите кнопку ниже — выбранный выше сервер автоматически импортируется в приложение.</p>
         
         <button class="btn-green" onclick="importToVpn()">
             <span>↗️ Автодобавление подписки</span>
@@ -75,38 +101,39 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Раскрываем окно на максимум
+        tg.expand();
 
-        // Читаем параметры из ссылки (передаются ботом)
+        let selectedKey = "vless://france_paris_node_here"; // По умолчанию выбрана Франция
+
         const urlParams = new URLSearchParams(window.location.search);
         const os = urlParams.get('os') || 'android';
         
-        // Настраиваем текст под платформу
         if (os === 'ios' || os === 'iphone') {
             document.getElementById('os-title').innerText = 'Настройка iPhone';
-            document.getElementById('download-text').innerText = 'Установите приложение Happ или Сlient из App Store.';
+            document.getElementById('download-text').innerText = 'Установите Happ или INCY из App Store.';
         } else {
             document.getElementById('os-title').innerText = 'Настройка Android';
-            document.getElementById('download-text').innerText = 'Установите приложение Happ из Google Play или скачайте APK.';
+            document.getElementById('download-text').innerText = 'Установите Happ из Google Play или используйте INCY.';
         }
 
-        // Берем имя юзера прямо из Telegram сессии
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('username').innerText = tg.initDataUnsafe.user.first_name || 'Пользователь';
         }
 
-        // Временные статичные данные (позже свяжем с базой данных через API)
-        document.getElementById('days-left').innerText = '30 дн.';
-        document.getElementById('expire-date').innerText = '05.12.2026';
+        function selectServer(element, key) {
+            // Снимаем активность со всех серверов
+            document.querySelectorAll('.server-option').forEach(opt => opt.classList.remove('active'));
+            // Делаем активным текущий
+            element.classList.add('active');
+            selectedKey = key;
+
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
 
         function importToVpn() {
-            // Тестовый ключ. Когда настроим 3X-UI, тут будет генерироваться под каждого юзера реальный vless://
-            const vpnKey = "vless://example-uuid-here@127.0.0.1:443?security=reality&sni=google.com&fp=chrome&pbk=fake&sid=fake#ShadowsPass";
+            // Перенаправляем устройство по протоколу выбранного сервера
+            window.location.href = selectedKey;
             
-            // Скрипт перенаправляет устройство по протоколу vless://, и установленный Happ автоматически его импортирует
-            window.location.href = vpnKey;
-            
-            // Небольшое вибро-подтверждение от Telegram
             if (tg.HapticFeedback) {
                 tg.HapticFeedback.notificationOccurred('success');
             }
